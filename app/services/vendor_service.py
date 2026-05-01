@@ -16,7 +16,6 @@ async def check_vendor_service(google_id: str,email:str):
 
     return error_response(
         message="Vendor not found",
-
         error_code="NOT_FOUND",
         data={"exists": False},
     )
