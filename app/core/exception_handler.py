@@ -1,0 +1,25 @@
+from fastapi import Request
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+
+
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    errors = []
+
+    for err in exc.errors():
+        field = err["loc"][-1]
+        message = err["msg"]
+
+        errors.append({
+            "field": field,
+            "message": message
+        })
+
+    return JSONResponse(
+        status_code=422,
+        content={
+            "success": False,
+            "message": "Validation Error",
+            "error": errors
+        }
+    )
