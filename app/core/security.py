@@ -1,8 +1,7 @@
 from jose import jwt
 from datetime import datetime, timedelta
+from app.config.config import settings
 
-SECRET_KEY = "my_secret_key"   
-ALGORITHM = "HS256"
 
 def create_access_token(data : dict):
     to_encode = data.copy()
@@ -11,7 +10,7 @@ def create_access_token(data : dict):
     
     to_encode.update({'exp' : expire})
     
-    token = jwt.encode(to_encode,SECRET_KEY,algorithm=ALGORITHM)
+    token = jwt.encode(to_encode,settings.SECRET_KEY,algorithm=settings.ALGORITHM)
     
     return token
 

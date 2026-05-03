@@ -14,10 +14,11 @@ class CreateVendorRequest(BaseModel):
     
     # basic info
     email: EmailStr
-    vendor_name: str
-    vendor_type: str = "vendor"
-    shop_name: str
+    name: str
+    type: str = "vendor"
+    shop_name: Optional[str] = None
     shop_description: Optional[str] = None
+    step: int = Form(0)
 
     # contact
     phone_number: Optional[str] = None
@@ -59,11 +60,12 @@ class CreateVendorRequest(BaseModel):
         cls,
         google_id: str = Form(...),
         email: EmailStr = Form(...),
-        vendor_name: str = Form(...),
-        shop_name: str = Form(...),
-        vendor_type: str = Form("vendor"),
+        name: str = Form(...),
+        shop_name: str = Form(None),
+        type: str = Form("vendor"),
         shop_description: str = Form(None),
-
+        step: int = Form(...), 
+        
         phone_number: str = Form(None),
         phone_code: str = Form(None),
         website: str = Form(None),
@@ -91,9 +93,10 @@ class CreateVendorRequest(BaseModel):
     ):
         return cls(
             google_id=google_id,
+            step=step,
             email=email,
-            vendor_name=vendor_name,
-            vendor_type=vendor_type,
+            name=name,
+            type=type,
             shop_name=shop_name,
             shop_description=shop_description,
             phone_number=phone_number,

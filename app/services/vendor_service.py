@@ -1,7 +1,8 @@
-from app.repositories.vendor_repository import vendor_exists, create_vendor
+from app.repositories.vendor_repository import vendor_exists, create_vendor, get_vendor_by_id
 from app.core.response import success_response, error_response,already_exixts_response
 from app.core.security import create_access_token
 from app.core.cloudnary_config import upload_image
+from app.models.vendor_models import vender_helper
 
 # service for business logic
 
@@ -32,22 +33,33 @@ async def create_vendor_service(request, shop_image, shop_logo):
     if exists :
         return already_exixts_response( message="Vendor already exists",data= exists)
     
-    shop_image_url = await upload_image(shop_image)
-    
+    shop_image_url = None
     shop_logo_url = None
+    
+    if request.step != 0:
+        if not shop_image:
+             return error_response(
+                message="Shop image is required",
+                error_code="IMAGE_REQUIRED"
+            )
+             
+        shop_image_url = await upload_image(shop_image)
+    
+    else :
+        if shop_logo:
+            shop_logo_url = await upload_image(shop_logo)
     
     if shop_logo:
         shop_logo_url = await upload_image(shop_logo)
     
-    
-    
     # 2. prepare vendor data
     
     vendor_data = {
-        "vendor_type" : "vendor",
+        "step" : request.step,
+        "type" : "vendor",
         "google_id" : request.google_id,
         "shop_name" : request.shop_name,
-        "vendor_name" : request.vendor_name,
+        "name" : request.name,
         "shop_description" : request.shop_description,
         "phone_number" : request.phone_number,
         "phone_code" : request.phone_code,
@@ -90,5 +102,25 @@ async def create_vendor_service(request, shop_image, shop_logo):
         "shop_logo_url" : shop_logo_url,
     })
 
+
+
+# vendor profile
+
+async def get_profile_service(vendor_id:str):
+    vendor = await get_vendor_by_id(vendor_id=vendor_id)
+    # print("DB result:", vendor)
     
+    if not vendor:
+        return error_response(
+            message="Vendor not found",
+            error_code="NOT_FOUND",
+        )
+        
+    vendor["id"] = str(vendor["_id"])
+    del vendor["_id"]
+    
+    return success_response(
+        message="Vendor profile fetched",
+        data= vendor
+    )
     

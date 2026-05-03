@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     CLOUDINARY_API_SECRET: str
 
     SECRET_KEY: str
+    ALGORITHM: str
 
     class Config:
         env_file = ".env"

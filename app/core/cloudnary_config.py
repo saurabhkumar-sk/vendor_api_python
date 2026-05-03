@@ -13,10 +13,13 @@ cloudinary.config(
 # reusable upload function
 async def upload_image(file: UploadFile, folder: str = "vendors"):
     
+    if not file:
+        return None
+    
     result = cloudinary.uploader.upload(
-        file.file,   # ✅ THIS IS IMPORTANT
+        file.file, 
         folder=folder,
         resource_type="image"
     )
 
-    return result["secure_url"]
+    return result.get["secure_url"]
