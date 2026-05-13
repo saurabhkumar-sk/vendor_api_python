@@ -119,3 +119,10 @@ class CreateVendorRequest(BaseModel):
             avg_preparation_time=avg_preparation_time,
             is_pre_order=is_pre_order
         )
+        
+        
+class LoginVendorRequest(BaseModel):
+    email : EmailStr
+    google_id : str        
+    
+    

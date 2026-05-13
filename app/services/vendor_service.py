@@ -1,4 +1,4 @@
-from app.repositories.vendor_repository import vendor_exists, create_vendor, get_vendor_by_id
+from app.repositories.vendor_repository import vendor_exists, create_vendor, get_vendor_by_id, login_vendor
 from app.core.response import success_response, error_response,already_exixts_response
 from app.core.security import create_access_token
 from app.core.cloudnary_config import upload_image
@@ -124,3 +124,37 @@ async def get_profile_service(vendor_id:str):
         data= vendor
     )
     
+    
+async def login_vendor_service(email : str, google_id : str):
+    
+    vendor = await login_vendor(email,google_id) # check vender exists or not in db
+    
+    if not vendor:
+        return error_response(
+            message= "Invalid credential",
+            error_code= "INVALID_CREDENTIALS"
+        )
+        
+    if vendor.get("step") != 3:
+        return error_response(
+            message="Complete profile setup first",
+            error_code="PROFILE_INCOMPLETE",
+            data={
+                "current_step": vendor.get("step")
+            }
+        )
+
+        
+    token = create_access_token({
+        "vendor_id" : str(vendor['_id']),
+        "email" : vendor['email'],
+    })
+    
+    
+    return success_response(
+        message="Login successful",
+        data= {
+            "token" : token,
+            "vendor" : vender_helper(vendor)
+         }
+    )

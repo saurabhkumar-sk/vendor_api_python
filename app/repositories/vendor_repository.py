@@ -20,6 +20,8 @@ async def create_vendor(vendor_data: dict):
     result = await db.vendors.insert_one(vendor_data)
     print(result.inserted_id)
     return result.inserted_id
+
+
 async def get_vendor_by_id(vendor_id: str):
     try:
         vendor = await db.vendors.find_one({
@@ -29,3 +31,12 @@ async def get_vendor_by_id(vendor_id: str):
     except Exception as e:
         print("ObjectId Error:", e)
         return None
+    
+async def login_vendor(email : str,google_id : str):
+    
+    vendor = await db.vendors.find_one({
+      "email" : email,
+      "google_id" : google_id,  
+    })
+    
+    return vendor

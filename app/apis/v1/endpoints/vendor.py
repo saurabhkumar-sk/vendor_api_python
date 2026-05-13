@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, UploadFile, File
-from app.schema.vendor_schema import CheckVendorRequest, CreateVendorRequest
-from app.services.vendor_service import check_vendor_service,create_vendor_service
+from app.schema.vendor_schema import CheckVendorRequest, CreateVendorRequest, LoginVendorRequest
+from app.services.vendor_service import check_vendor_service,create_vendor_service, login_vendor_service
 from app.schema.response_schema import SuccessResponse,ErrorResponse
 import json
 from typing import Union
@@ -33,3 +33,12 @@ async def create_vendor(
 @router.get("/profile")
 async def get_profile(vendor_id: str = Depends(get_vendor_profile)):
     return await get_profile_service(vendor_id)
+
+
+@router.get("/login")
+async def login(payload : LoginVendorRequest):
+    
+    return await login_vendor_service(
+        payload.email,
+        payload.google_id,
+    )
